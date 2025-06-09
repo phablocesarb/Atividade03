@@ -1,8 +1,6 @@
-// src/api.js
 import axios from "axios";
 import { Platform } from "react-native";
 
-// IP da sua máquina na rede local
 const LOCAL_IP = "192.168.100.5";
 
 const baseURL =

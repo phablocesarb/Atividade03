@@ -1,13 +1,11 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 
-import { NavigationContainer, StackActions } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { LogBox } from 'react-native';
 
-import ListarProduto from './src/paginas/ListarProduto'
-import IncluirProduto from './src/paginas/IncluirProduto'
-import AlterarProduto from './src/paginas/AlterarProduto'
+import AlterarProduto from './src/paginas/AlterarProduto';
+import IncluirProduto from './src/paginas/IncluirProduto';
+import ListarProduto from './src/paginas/ListarProduto';
 
 const Stack = createStackNavigator();
 
