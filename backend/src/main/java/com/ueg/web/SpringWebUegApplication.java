@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class SpringWebUegApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SpringWebUegApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(SpringWebUegApplication.class, args);
+    }
 }

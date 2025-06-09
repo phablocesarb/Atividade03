@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -26,11 +27,14 @@ public class Produto {
     private double preco;
 
     @ManyToOne
+    @JoinColumn(name = "categoria_id")
     private Categoria categoria;
 
     @ManyToOne
+    @JoinColumn(name = "fornecedor_id")
     private Fornecedor fornecedor;
 
+    @Column(name = "quantidade_estoque")
     private int quantidadeEstoque;
 
     public Produto() {

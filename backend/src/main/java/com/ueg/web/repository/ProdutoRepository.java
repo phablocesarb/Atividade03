@@ -5,8 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import com.ueg.web.model.Produto;
 
-
 @Repository
-public interface ProdutoRepository extends JpaRepository<Produto, Long>{
+public interface ProdutoRepository extends JpaRepository<Produto, Long> {
 
 }
