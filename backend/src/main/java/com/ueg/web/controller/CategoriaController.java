@@ -22,7 +22,7 @@ import com.ueg.web.repository.CategoriaRepository;
 
 @RestController
 @RequestMapping("/categorias")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class CategoriaController {
 
     @Autowired

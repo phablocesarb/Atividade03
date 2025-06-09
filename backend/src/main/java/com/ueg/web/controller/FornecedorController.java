@@ -22,7 +22,7 @@ import com.ueg.web.repository.FornecedorRepository;
 
 @RestController
 @RequestMapping("/fornecedores")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class FornecedorController {
 
     @Autowired
