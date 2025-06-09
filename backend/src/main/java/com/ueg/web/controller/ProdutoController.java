@@ -21,7 +21,7 @@ import com.ueg.web.model.Produto;
 import com.ueg.web.repository.ProdutoRepository;
 
 @RequestMapping("/pcontroller/")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 @RestController
 public class ProdutoController {
 
