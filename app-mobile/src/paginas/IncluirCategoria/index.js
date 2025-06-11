@@ -6,19 +6,18 @@ import style from "./style";
 export default function IncluirCategoria({ navigation }) {
     const [nome, setNome] = useState(null);
 
-    function incluirCategoria() {
+    async function incluirCategoria() {
         const categoria = {
             id: 0,
-            nome: nome
+            nome
         };
 
         try {
-            api.post("/categorias", categoria);
+            await api.post("/categorias", categoria);
+            navigation.navigate("ListarCategoria");
         } catch (error) {
             console.log("Erro ao incluir categoria: " + error.message);
         }
-
-        navigation.navigate("ListarCategoria");
     }
 
     return (

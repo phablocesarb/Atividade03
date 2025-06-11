@@ -7,7 +7,7 @@ export default function IncluirUsuario({ navigation }) {
     const [nome, setNome] = useState(null);
     const [email, setEmail] = useState(null);
 
-    function incluirUsuario() {
+    async function incluirUsuario() {
         const usuario = {
             id: 0,
             nome,
@@ -15,12 +15,11 @@ export default function IncluirUsuario({ navigation }) {
         };
 
         try {
-            api.post("/usuarios", usuario);
+            await api.post("/usuarios", usuario);
+            navigation.navigate("ListarUsuario");
         } catch (error) {
             console.log("Erro ao incluir usuário: " + error.message);
         }
-
-        navigation.navigate("ListarUsuario");
     }
 
     return (

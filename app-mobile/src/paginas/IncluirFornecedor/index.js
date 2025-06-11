@@ -7,7 +7,7 @@ export default function IncluirFornecedor({ navigation }) {
     const [nome, setNome] = useState(null);
     const [cnpj, setCnpj] = useState(null);
 
-    function incluirFornecedor() {
+    async function incluirFornecedor() {
         const fornecedor = {
             id: 0,
             nome,
@@ -15,12 +15,11 @@ export default function IncluirFornecedor({ navigation }) {
         };
 
         try {
-            api.post("/fornecedores", fornecedor);
+            await api.post("/fornecedores", fornecedor);
+            navigation.navigate("ListarFornecedor");
         } catch (error) {
             console.log("Erro ao incluir fornecedor: " + error.message);
         }
-
-        navigation.navigate("ListarFornecedor");
     }
 
     return (
