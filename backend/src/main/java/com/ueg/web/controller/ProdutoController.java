@@ -20,59 +20,61 @@ import com.ueg.web.exception.ResourceNotFoundException;
 import com.ueg.web.model.Produto;
 import com.ueg.web.repository.ProdutoRepository;
 
-@RequestMapping("/pcontroller/")
-@CrossOrigin(origins = "*")
 @RestController
+@RequestMapping("/produtos")
+@CrossOrigin(origins = "*")
 public class ProdutoController {
 
     @Autowired
-    private ProdutoRepository pRep;
+    private ProdutoRepository produtoRepository;
 
     // Listar todos os produtos
-    @GetMapping("/produtos")
+    @GetMapping
     public List<Produto> listar() {
-        return this.pRep.findAll();
+        return produtoRepository.findAll();
     }
 
-    // Consultar produto
-    @GetMapping("/produtos/{id}")
+    // Consultar produto por ID
+    @GetMapping("/{id}")
     public ResponseEntity<Produto> consultar(@PathVariable Long id) {
-        Produto produto = pRep.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Produto nao encontrado: " + id));
+        Produto produto = produtoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado: " + id));
         return ResponseEntity.ok(produto);
     }
 
-    // Inserir produto
-    @PostMapping("/produtos")
+    // Inserir novo produto
+    @PostMapping
     public Produto inserir(@RequestBody Produto produto) {
-        return pRep.save(produto);
-    }
-
-    // Excluir produto
-    @DeleteMapping("/produtos/{id}")
-    public ResponseEntity<Map<String, Boolean>> excluir(@PathVariable Long id) {
-        Produto produto = pRep.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Produto nao encontrado: " + id));
-        pRep.delete(produto);
-        Map<String, Boolean> resposta = new HashMap<>();
-        resposta.put("excluido", Boolean.TRUE); // melhor para consumir no frontend
-        return ResponseEntity.ok(resposta);
+        return produtoRepository.save(produto);
     }
 
     // Alterar produto
-    @PutMapping("/produtos/{id}")
-    public ResponseEntity<Produto> alterar(@PathVariable Long id, @RequestBody Produto produto) {
-        Produto prod = pRep.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Produto nao encontrado: " + id));
+    @PutMapping("/{id}")
+    public ResponseEntity<Produto> alterar(@PathVariable Long id, @RequestBody Produto produtoData) {
+        Produto produto = produtoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado: " + id));
 
-        prod.setNome(produto.getNome());
-        prod.setQuantidade(produto.getQuantidade());
-        prod.setPreco(produto.getPreco());
-        prod.setCategoria(produto.getCategoria());
-        prod.setFornecedor(produto.getFornecedor());
-        prod.setQuantidadeEstoque(produto.getQuantidadeEstoque());
+        produto.setNome(produtoData.getNome());
+        produto.setQuantidade(produtoData.getQuantidade());
+        produto.setPreco(produtoData.getPreco());
+        produto.setCategoria(produtoData.getCategoria());
+        produto.setFornecedor(produtoData.getFornecedor());
+        produto.setQuantidadeEstoque(produtoData.getQuantidadeEstoque());
 
-        Produto atualizado = pRep.save(prod);
+        Produto atualizado = produtoRepository.save(produto);
         return ResponseEntity.ok(atualizado);
+    }
+
+    // Excluir produto
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, Boolean>> excluir(@PathVariable Long id) {
+        Produto produto = produtoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado: " + id));
+
+        produtoRepository.delete(produto);
+
+        Map<String, Boolean> resposta = new HashMap<>();
+        resposta.put("excluido", Boolean.TRUE);
+        return ResponseEntity.ok(resposta);
     }
 }
