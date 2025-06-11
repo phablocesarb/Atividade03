@@ -9,7 +9,7 @@ const baseURL =
     : `http://localhost:8095/pcontroller`;
 
 const api = axios.create({
-  baseURL,
+  baseURL: "http://192.168.100.5:8095",
 });
 
 export default api;
