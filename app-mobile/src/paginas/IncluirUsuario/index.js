@@ -1,48 +1,70 @@
-import React, { useState } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import api from "../../services/api";
+import React, { useEffect, useState } from "react";
+import { View, Text, FlatList, RefreshControl, TouchableOpacity, Alert } from "react-native";
+import axios from "axios";
 import style from "./style";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
 
-export default function IncluirUsuario({ navigation }) {
-    const [nome, setNome] = useState(null);
-    const [email, setEmail] = useState(null);
+export default function ListarUsuario() {
+    const navigation = useNavigation();
+    const isFocused = useIsFocused();
 
-    async function incluirUsuario() {
-        const usuario = {
-            id: 0,
-            nome,
-            email
-        };
+    const [usuarios, setUsuarios] = useState([]);
+    const [refreshing, setRefreshing] = useState(false);
 
+    const carregarUsuarios = async () => {
         try {
-            await api.post("/usuarios", usuario);
-            navigation.navigate("ListarUsuario");
+            const response = await axios.get("http://localhost:8080/usuarios");
+            setUsuarios(response.data);
         } catch (error) {
-            console.log("Erro ao incluir usuário: " + error.message);
+            console.error("Erro ao buscar usuários:", error);
         }
-    }
+    };
+
+    useEffect(() => {
+        carregarUsuarios();
+    }, [isFocused]);
+
+    const excluirUsuario = async (id) => {
+        Alert.alert("Excluir", "Deseja excluir este usuário?", [
+            { text: "Cancelar" },
+            {
+                text: "Confirmar",
+                onPress: async () => {
+                    try {
+                        await axios.delete(`http://localhost:8080/usuarios/${id}`);
+                        carregarUsuarios();
+                    } catch (error) {
+                        console.error("Erro ao excluir:", error);
+                    }
+                },
+            },
+        ]);
+    };
 
     return (
         <View style={style.container}>
-            <Text style={style.label}>Nome</Text>
-            <TextInput
-                style={style.input}
-                placeholder="Nome do usuário"
-                onChangeText={setNome}
-                value={nome}
+            <FlatList
+                data={usuarios}
+                keyExtractor={(item) => item.id.toString()}
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={carregarUsuarios} />
+                }
+                renderItem={({ item }) => (
+                    <TouchableOpacity
+                        style={style.produtoButton}
+                        onLongPress={() => excluirUsuario(item.id)}
+                    >
+                        <Text style={style.produtoText}>{item.nome}</Text>
+                        <Text style={style.produtoText}>{item.email}</Text>
+                    </TouchableOpacity>
+                )}
             />
 
-            <Text style={style.label}>Email</Text>
-            <TextInput
-                style={style.input}
-                placeholder="Email"
-                keyboardType="email-address"
-                onChangeText={setEmail}
-                value={email}
-            />
-
-            <TouchableOpacity style={style.buttonNewProduto} onPress={incluirUsuario}>
-                <Text style={style.iconButton}>Salvar</Text>
+            <TouchableOpacity
+                style={style.buttonNewProduto}
+                onPress={() => navigation.navigate("IncluirUsuario")}
+            >
+                <Text style={style.iconButton}>+</Text>
             </TouchableOpacity>
         </View>
     );
