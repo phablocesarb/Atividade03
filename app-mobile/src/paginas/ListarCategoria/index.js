@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, RefreshControl, TouchableOpacity, Alert } from "react-native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { Alert, FlatList, RefreshControl, Text, TouchableOpacity, View } from "react-native";
 import style from "./style";
-import { useNavigation, useIsFocused } from "@react-navigation/native";
 
 export default function ListarCategoria() {
     const navigation = useNavigation();
