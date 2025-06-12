@@ -1,33 +1,28 @@
-import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { FontAwesome } from "@expo/vector-icons";
 import React, { useCallback, useEffect, useState } from "react";
 import { Alert, FlatList, RefreshControl, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
-import api from "../../services/api"; // Use o mesmo api do seu produto
+import api from "../../services/api";
 import style from "./style";
 
-export default function ListarCategoria() {
-    const navigation = useNavigation();
-    const isFocused = useIsFocused();
-
+export default function ListarCategoria({ navigation }) {
     const [categorias, setCategorias] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
 
-    const carregarCategorias = useCallback(async () => {
-        setRefreshing(true);
-        try {
-            const response = await api.get("/categorias");
-            setCategorias(response.data);
-        } catch (error) {
-            console.error("Erro ao buscar categorias:", error);
-        } finally {
-            setRefreshing(false);
-        }
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            atualizarLista();
+        });
+        return unsubscribe;
+    }, [navigation]);
+
+    const atualizarLista = useCallback(() => {
+        api.get("/categorias")
+            .then((res) => setCategorias(res.data))
+            .catch((err) => console.log("Erro: ", err.message))
+            .finally(() => setRefreshing(false));
     }, []);
 
-    useEffect(() => {
-        if (isFocused) carregarCategorias();
-    }, [isFocused, carregarCategorias]);
-
-    const excluirCategoria = (id) => {
+    const excluirCategoria = async (id) => {
         Alert.alert("Excluir", "Deseja excluir esta categoria?", [
             { text: "Cancelar" },
             {
@@ -35,7 +30,7 @@ export default function ListarCategoria() {
                 onPress: async () => {
                     try {
                         await api.delete(`/categorias/${id}`);
-                        carregarCategorias();
+                        atualizarLista();
                     } catch (error) {
                         console.error("Erro ao excluir:", error);
                     }
@@ -45,28 +40,41 @@ export default function ListarCategoria() {
     };
 
     const onRefresh = useCallback(() => {
-        carregarCategorias();
-    }, [carregarCategorias]);
+        setRefreshing(true);
+        atualizarLista();
+    }, [atualizarLista]);
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <View style={style.container}>
                 <FlatList
-                    data={categorias}
-                    keyExtractor={(item) => item.id.toString()}
                     refreshControl={
                         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                     }
+                    data={categorias}
+                    keyExtractor={(item) => item.id.toString()}
                     renderItem={({ item }) => (
-                        <TouchableOpacity
-                            style={style.produtoButton}
-                            onLongPress={() => excluirCategoria(item.id)}
-                        >
-                            <Text style={style.produtoText}>{item.nome}</Text>
-                        </TouchableOpacity>
+                        <View style={style.Produtos}>
+                            <Text
+                                onPress={() =>
+                                    navigation.navigate("AlterarCategoria", {
+                                        id: item.id,
+                                        nome: item.nome,
+                                    })
+                                }
+                                style={style.DescriptionProduto}
+                            >
+                                {item.nome}
+                            </Text>
+                            <TouchableOpacity
+                                style={style.deleteProduto}
+                                onPress={() => excluirCategoria(item.id)}
+                            >
+                                <FontAwesome name="trash" size={20} color="#007bff" />
+                            </TouchableOpacity>
+                        </View>
                     )}
                 />
-
                 <TouchableOpacity
                     style={style.buttonNewProduto}
                     onPress={() => navigation.navigate("IncluirCategoria")}

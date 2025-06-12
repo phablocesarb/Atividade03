@@ -1,33 +1,28 @@
-import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { FontAwesome } from "@expo/vector-icons";
 import React, { useCallback, useEffect, useState } from "react";
 import { Alert, FlatList, RefreshControl, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 import api from "../../services/api";
 import style from "./style";
 
-export default function ListarFornecedor() {
-    const navigation = useNavigation();
-    const isFocused = useIsFocused();
-
+export default function ListarFornecedor({ navigation }) {
     const [fornecedores, setFornecedores] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
 
-    const carregarFornecedores = useCallback(async () => {
-        setRefreshing(true);
-        try {
-            const response = await api.get("/fornecedores");
-            setFornecedores(response.data);
-        } catch (error) {
-            console.error("Erro ao buscar fornecedores:", error);
-        } finally {
-            setRefreshing(false);
-        }
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            atualizarLista();
+        });
+        return unsubscribe;
+    }, [navigation]);
+
+    const atualizarLista = useCallback(() => {
+        api.get("/fornecedores")
+            .then((res) => setFornecedores(res.data))
+            .catch((err) => console.log("Erro: ", err.message))
+            .finally(() => setRefreshing(false));
     }, []);
 
-    useEffect(() => {
-        if (isFocused) carregarFornecedores();
-    }, [isFocused, carregarFornecedores]);
-
-    const excluirFornecedor = (id) => {
+    const excluirFornecedor = async (id) => {
         Alert.alert("Excluir", "Deseja excluir este fornecedor?", [
             { text: "Cancelar" },
             {
@@ -35,7 +30,7 @@ export default function ListarFornecedor() {
                 onPress: async () => {
                     try {
                         await api.delete(`/fornecedores/${id}`);
-                        carregarFornecedores();
+                        atualizarLista();
                     } catch (error) {
                         console.error("Erro ao excluir:", error);
                     }
@@ -45,29 +40,42 @@ export default function ListarFornecedor() {
     };
 
     const onRefresh = useCallback(() => {
-        carregarFornecedores();
-    }, [carregarFornecedores]);
+        setRefreshing(true);
+        atualizarLista();
+    }, [atualizarLista]);
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <View style={style.container}>
                 <FlatList
-                    data={fornecedores}
-                    keyExtractor={(item) => item.id.toString()}
                     refreshControl={
                         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                     }
+                    data={fornecedores}
+                    keyExtractor={(item) => item.id.toString()}
                     renderItem={({ item }) => (
-                        <TouchableOpacity
-                            style={style.produtoButton}
-                            onLongPress={() => excluirFornecedor(item.id)}
-                        >
-                            <Text style={style.produtoText}>{item.nome}</Text>
-                            <Text style={style.produtoText}>{item.cnpj}</Text>
-                        </TouchableOpacity>
+                        <View style={style.Produtos}>
+                            <Text
+                                onPress={() =>
+                                    navigation.navigate("AlterarFornecedor", {
+                                        id: item.id,
+                                        nome: item.nome,
+                                        cnpj: item.cnpj,
+                                    })
+                                }
+                                style={style.DescriptionProduto}
+                            >
+                                {item.nome}{"\n"}{item.cnpj}
+                            </Text>
+                            <TouchableOpacity
+                                style={style.deleteProduto}
+                                onPress={() => excluirFornecedor(item.id)}
+                            >
+                                <FontAwesome name="trash" size={20} color="#007bff" />
+                            </TouchableOpacity>
+                        </View>
                     )}
                 />
-
                 <TouchableOpacity
                     style={style.buttonNewProduto}
                     onPress={() => navigation.navigate("IncluirFornecedor")}

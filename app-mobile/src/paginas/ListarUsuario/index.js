@@ -1,6 +1,6 @@
 import { FontAwesome } from "@expo/vector-icons";
 import React, { useCallback, useEffect, useState } from "react";
-import { FlatList, RefreshControl, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, RefreshControl, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 import api from "../../services/api";
 import style from "./style";
 
@@ -23,12 +23,20 @@ export default function ListarUsuario({ navigation }) {
     }, []);
 
     const excluirUsuario = async (id) => {
-        try {
-            await api.delete(`/usuarios/${id}`);
-            atualizarLista();
-        } catch (err) {
-            console.log("Erro ao excluir: ", err.message);
-        }
+        Alert.alert("Excluir", "Deseja excluir este usuário?", [
+            { text: "Cancelar" },
+            {
+                text: "Confirmar",
+                onPress: async () => {
+                    try {
+                        await api.delete(`/usuarios/${id}`);
+                        atualizarLista();
+                    } catch (error) {
+                        console.error("Erro ao excluir:", error);
+                    }
+                }
+            }
+        ]);
     };
 
     const onRefresh = useCallback(() => {
@@ -40,7 +48,9 @@ export default function ListarUsuario({ navigation }) {
         <SafeAreaView style={{ flex: 1 }}>
             <View style={style.container}>
                 <FlatList
-                    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+                    refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                    }
                     data={usuarios}
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={({ item }) => (
@@ -50,20 +60,26 @@ export default function ListarUsuario({ navigation }) {
                                     navigation.navigate("AlterarUsuario", {
                                         id: item.id,
                                         nome: item.nome,
-                                        email: item.email
+                                        email: item.email,
                                     })
                                 }
                                 style={style.DescriptionProduto}
                             >
                                 {item.nome}
                             </Text>
-                            <TouchableOpacity style={style.deleteProduto} onPress={() => excluirUsuario(item.id)}>
+                            <TouchableOpacity
+                                style={style.deleteProduto}
+                                onPress={() => excluirUsuario(item.id)}
+                            >
                                 <FontAwesome name="trash" size={20} color="#007bff" />
                             </TouchableOpacity>
                         </View>
                     )}
                 />
-                <TouchableOpacity style={style.buttonNewProduto} onPress={() => navigation.navigate("IncluirUsuario")}>
+                <TouchableOpacity
+                    style={style.buttonNewProduto}
+                    onPress={() => navigation.navigate("IncluirUsuario")}
+                >
                     <Text style={style.iconButton}>+</Text>
                 </TouchableOpacity>
             </View>
