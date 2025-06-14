@@ -1,48 +1,47 @@
-import { StyleSheet } from 'react-native'
+import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor:"#fff",
-    paddingTop: 20
- },
- Produtos:{
-  width:"100%",
-  flexDirection:"row",
-  justifyContent:"space-between",
-  marginTop:5
- },
- deleteProduto:{
-   justifyContent:"center",
-   paddingRight:45,
- },
- DescriptionProduto:{
-  width:"75%",
-  alignContent:"flex-start",
-  backgroundColor:"#f5f5f5cf",
-  padding:12,
-  paddingHorizontal: 20,
-  borderRadius:50,
-  marginBottom: 5,
-  marginRight:15,
-  color:"#282b2db5",
- },
- buttonNewProduto:{
-  width:60,
-  height:60,
-  position:"relative",
-  bottom: 30,
-  left:20,
-  backgroundColor:"#007bff",
-  borderRadius:50,
-  justifyContent:"center",
-  alignItems: "center"
- },
- iconButton:{
-  color:"#ffffff",
-  fontSize:25,
-  fontWeight:"bold",
- },
+    backgroundColor: '#fff',
+    padding: 20,
+  },
+  Produtos: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#f8f9fa',
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#007bff33'
+  },
+  DescriptionProduto: {
+    fontSize: 16,
+    color: '#333',
+    flex: 1,
+  },
+  deleteProduto: {
+    marginLeft: 10,
+  },
+  buttonNewProduto: {
+    position: 'absolute',
+    right: 20,
+    bottom: 30,
+    backgroundColor: '#007bff',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 5
+  },
+  iconButton: {
+    color: '#fff',
+    fontSize: 28,
+    fontWeight: 'bold',
+  }
 });
 
-export default styles
+export default styles;
